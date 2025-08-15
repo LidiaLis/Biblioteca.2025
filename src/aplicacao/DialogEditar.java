@@ -9,31 +9,74 @@ import dao.LivroDAOJDBC;
 import dao.UsuarioDAO;
 import dao.UsuarioDAOJDBC;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import modelo.Livro;
 import modelo.Usuario;
-import java.text.SimpleDateFormat;
-import javax.swing.DefaultComboBoxModel;
-
 
 /**
  *
  * @author Usuario
  */
-public class DialogInserir extends javax.swing.JDialog {
+public class DialogEditar extends javax.swing.JDialog {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DialogInserir.class.getName());
+    private int idLivro; // ID do livro a editar
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DialogEditar.class.getName());
     private int idQueEuQueroSelecionar = -1;
 
-    
-    /**
-     * Creates new form DialogInserir
-     * @param modal
-     */
-    public DialogInserir(java.awt.Frame parent, boolean modal) {
+    public DialogEditar(java.awt.Frame parent, boolean modal, int idLivro) {
         super(parent, modal);
+        this.idLivro = idLivro;
         initComponents();
+        carregarLivro();
+    }
+    private void carregarUsuarios(){
+    try {
+        DefaultComboBoxModel<Usuario> modeloUsuarios = new DefaultComboBoxModel<>();
+        UsuarioDAO usuarioDAO = new UsuarioDAOJDBC();
+        for (Usuario u : usuarioDAO.listar()) {
+            modeloUsuarios.addElement(u);
+        }
+        cbUsuario.setModel(modeloUsuarios);
+
+        // Seleciona o usuário atual do livro
+        if (idQueEuQueroSelecionar > 0) {
+            for (int i = 0; i < modeloUsuarios.getSize(); i++) {
+                Usuario u = modeloUsuarios.getElementAt(i);
+                if (u.getId_usuario() == idQueEuQueroSelecionar) {
+                    cbUsuario.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Erro ao carregar usuários: " + e.getMessage());
+    }
+    }
+    private void carregarLivro() {
+        LivroDAO dao = new LivroDAOJDBC();
+        Livro livro = dao.listar(idLivro);
+        if (livro != null) {
+            txtTitulo.setText(livro.getTitulo());
+            txtAutor.setText(livro.getAutor());
+            txtGenero.setText(livro.getGenero());
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            ftxtData.setText(sdf.format(livro.getData_doacao()));
+
+            checkBDisponivel.setSelected(livro.getDisponivel());
+
+            if (livro.getId_doador() != null) {
+                idQueEuQueroSelecionar = livro.getId_doador().getId_usuario();
+            }
+            carregarUsuarios();
+        } else {
+            JOptionPane.showMessageDialog(this, "Livro não encontrado!", "Erro", JOptionPane.ERROR_MESSAGE);
+            dispose();
+        }
     }
 
     /**
@@ -58,10 +101,15 @@ public class DialogInserir extends javax.swing.JDialog {
         txtGenero = new javax.swing.JTextField();
         checkBDisponivel = new javax.swing.JCheckBox();
         ftxtData = new javax.swing.JFormattedTextField();
-        btnInserirSalva = new javax.swing.JButton();
+        btnEditarSalva = new javax.swing.JButton();
         cbUsuario = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                formFocusGained(evt);
+            }
+        });
         addWindowFocusListener(new java.awt.event.WindowFocusListener() {
             public void windowGainedFocus(java.awt.event.WindowEvent evt) {
                 formWindowGainedFocus(evt);
@@ -116,10 +164,10 @@ public class DialogInserir extends javax.swing.JDialog {
             ex.printStackTrace();
         }
 
-        btnInserirSalva.setText("Salvar");
-        btnInserirSalva.addActionListener(new java.awt.event.ActionListener() {
+        btnEditarSalva.setText("Salvar");
+        btnEditarSalva.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnInserirSalvaActionPerformed(evt);
+                btnEditarSalvaActionPerformed(evt);
             }
         });
 
@@ -166,7 +214,7 @@ public class DialogInserir extends javax.swing.JDialog {
                         .addGap(57, 57, 57))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnInserirSalva)
+                .addComponent(btnEditarSalva)
                 .addGap(29, 29, 29))
         );
         jPanel4Layout.setVerticalGroup(
@@ -198,7 +246,7 @@ public class DialogInserir extends javax.swing.JDialog {
                     .addComponent(jLabel12)
                     .addComponent(checkBDisponivel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addComponent(btnInserirSalva)
+                .addComponent(btnEditarSalva)
                 .addGap(14, 14, 14))
         );
 
@@ -207,18 +255,17 @@ public class DialogInserir extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtTituloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTituloActionPerformed
@@ -229,8 +276,8 @@ public class DialogInserir extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_checkBDisponivelActionPerformed
 
-    private void btnInserirSalvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserirSalvaActionPerformed
-    try {
+    private void btnEditarSalvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarSalvaActionPerformed
+        try {
             String titulo = txtTitulo.getText().trim();
             String autor = txtAutor.getText().trim();
             String genero = txtGenero.getText().trim();
@@ -243,7 +290,6 @@ public class DialogInserir extends javax.swing.JDialog {
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             sdf.setLenient(false);
-
             Date utilDate;
             try {
                 utilDate = sdf.parse(dataTexto);
@@ -251,7 +297,6 @@ public class DialogInserir extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, "Data inválida. Use formato dd/MM/yyyy.", "Erro", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
             Date hoje = new Date();
             if (utilDate.after(hoje)) {
                 JOptionPane.showMessageDialog(this, "A data de doação não pode ser futura!", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -267,61 +312,42 @@ public class DialogInserir extends javax.swing.JDialog {
             }
 
             Livro livro = new Livro();
+            livro.setId_livro(idLivro);
             livro.setTitulo(titulo);
             livro.setAutor(autor);
             livro.setGenero(genero);
             livro.setData_doacao(utilDate);
             livro.setDisponivel(disponivel);
-            livro.setId_doador(usuarioSelecionado); 
+            livro.setId_doador(usuarioSelecionado);
 
             LivroDAO dao = new LivroDAOJDBC();
-            int sucesso = dao.inserir(livro);
+            int sucesso = dao.editar(livro);
 
             if (sucesso > 0) {
-                JOptionPane.showMessageDialog(this, "Livro inserido com sucesso!");
-                dispose(); // fecha o diálogo
+                JOptionPane.showMessageDialog(this, "Livro atualizado com sucesso!");
+                dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Erro ao inserir livro.");
+                JOptionPane.showMessageDialog(this, "Erro ao atualizar livro.");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro inesperado: " + e.getMessage());
         }
-    
-    }//GEN-LAST:event_btnInserirSalvaActionPerformed
 
-    private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-    DefaultComboBoxModel<Usuario> modeloUsuarios = new DefaultComboBoxModel<>();
-        UsuarioDAO usuarioDAO = new UsuarioDAOJDBC();
+    }//GEN-LAST:event_btnEditarSalvaActionPerformed
 
-        for (Usuario u : usuarioDAO.listar()) {
-            modeloUsuarios.addElement(u);
-        }
-
-        cbUsuario.setModel(modeloUsuarios);
-
-        if (modeloUsuarios.getSize() > 0) {
-            cbUsuario.setSelectedIndex(0);
-        }
-
-        // Selecionar por id, se desejado
-        if (idQueEuQueroSelecionar > 0) {
-            for (int i = 0; i < modeloUsuarios.getSize(); i++) {
-                Usuario u = modeloUsuarios.getElementAt(i);
-                if (u.getId_usuario() == idQueEuQueroSelecionar) {
-                    cbUsuario.setSelectedIndex(i);
-                    break;
-                }
-            }
-        }
-
-   
-    }//GEN-LAST:event_formWindowGainedFocus
+    private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
+        
+    }//GEN-LAST:event_formFocusGained
 
     private void cbUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbUsuarioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cbUsuarioActionPerformed
+
+    private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
+        
+    }//GEN-LAST:event_formWindowGainedFocus
 
     /**
      * @param args the command line arguments
@@ -348,20 +374,22 @@ public class DialogInserir extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                DialogInserir dialog = new DialogInserir(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
+            int idLivroParaEditar = 5; // coloque o ID do livro que você quer editar
+            DialogEditar dialog = new DialogEditar(new javax.swing.JFrame(), true, idLivroParaEditar);
+            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    System.exit(0);
+                 }
+            });
+            dialog.setVisible(true);
             }
+
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnInserirSalva;
+    private javax.swing.JButton btnEditarSalva;
     private javax.swing.JComboBox<Usuario> cbUsuario;
     private javax.swing.JCheckBox checkBDisponivel;
     private javax.swing.JFormattedTextField ftxtData;

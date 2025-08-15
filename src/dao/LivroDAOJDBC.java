@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import modelo.Usuario;
 import modelo.Livro;
 
@@ -57,7 +59,7 @@ public class LivroDAOJDBC implements LivroDAO{
                 .append("autor = ?,  ")
                 .append("genero = ?, ")
                 .append("data_doacao = ?,  ")
-                .append("disponivel c")
+                .append("disponivel = ?  ")
                 .append("WHERE id_livro = ?");
         String update = sqlBuilder.toString();
         int linha = 0;
@@ -66,8 +68,9 @@ public class LivroDAOJDBC implements LivroDAO{
                                                         livro.getTitulo(),
                                                         livro.getAutor(),
                                                         livro.getGenero(),
-                                                        livro.getData_doacao(),
-                                                        livro.getDisponivel());
+                                                        new java.sql.Date(livro.getData_doacao().getTime()), 
+                                                        livro.getDisponivel(),
+                                                        livro.getId_livro());
         } catch (Exception e) {
             e.printStackTrace();
         } 
@@ -121,7 +124,36 @@ public class LivroDAOJDBC implements LivroDAO{
 
     @Override
     public Livro listar(int id_livro) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    String select = "SELECT l.id_livro, l.id_doador, l.titulo, l.autor, l.genero, l.disponivel, l.data_doacao, " +
+                    "u.nome, u.telefone, u.email " +
+                    "FROM livro l " +
+                    "JOIN usuario u ON l.id_doador = u.id_usuario " +
+                    "WHERE l.id_livro = ?";
+    Livro livro = null;
+    try {
+        ResultSet rset = DAOGenerico.executarConsulta(select, id_livro);
+        if (rset.next()) {
+            Usuario usuario = new Usuario();
+            usuario.setId_usuario(rset.getInt("id_doador"));
+            usuario.setNome(rset.getString("nome"));
+            usuario.setTelefone(rset.getString("telefone"));
+            usuario.setEmail(rset.getString("email"));
+
+            livro = new Livro();
+            livro.setId_livro(rset.getInt("id_livro"));
+            livro.setTitulo(rset.getString("titulo"));
+            livro.setAutor(rset.getString("autor"));
+            livro.setGenero(rset.getString("genero"));
+            livro.setData_doacao(rset.getDate("data_doacao"));
+            livro.setDisponivel(rset.getBoolean("disponivel"));
+            livro.setId_doador(usuario);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }   catch (ClassNotFoundException ex) {
+            Logger.getLogger(LivroDAOJDBC.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    return livro;
+}
   
 }
