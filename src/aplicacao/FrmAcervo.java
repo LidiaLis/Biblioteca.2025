@@ -6,15 +6,9 @@
 package aplicacao;
 
 import dao.DAOFactory;
-import dao.DAOGenerico;
 import dao.LivroDAO;
 import dao.LivroDAOJDBC;
-import dao.UsuarioDAO;
-import dao.UsuarioDAOJDBC;
 import java.awt.Component;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -50,17 +44,36 @@ public class FrmAcervo extends javax.swing.JFrame {
         atualizarTabela();
     }
     
+    private void atualizarTabela(String campo, Object valor) {
+    DefaultTableModel model = (DefaultTableModel) tblAcervo.getModel();
+    model.setRowCount(0);
+
+    LivroDAOJDBC dao = new LivroDAOJDBC();
+    List<Livro> livros = dao.listarPorCampo(campo, valor);
+
+    for (Livro livro : livros) {
+        model.addRow(new Object[]{
+            livro.getId_livro(),
+            livro.getId_doador().getNome(), // agora mostra o nome do doador
+            livro.getTitulo(),
+            livro.getAutor(),
+            livro.getGenero(),
+            livro.getData_doacao(),
+            livro.getDisponivel()
+        });
+    }
+    }
     private void atualizarTabela() {
     DefaultTableModel model = (DefaultTableModel) tblAcervo.getModel();
     model.setRowCount(0);
 
     LivroDAO dao = new LivroDAOJDBC();
-    List<Livro> livros = dao.listar();
+    List<Livro> livros = dao.listar(); 
 
     for (Livro livro : livros) {
         model.addRow(new Object[]{
             livro.getId_livro(),
-            livro.getId_doador(),
+            livro.getId_doador().getNome(),
             livro.getTitulo(),
             livro.getAutor(),
             livro.getGenero(),
@@ -70,10 +83,7 @@ public class FrmAcervo extends javax.swing.JFrame {
     }
     }
     
-
-
-
-
+private Object valorInicialDisponivel;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -103,6 +113,7 @@ public class FrmAcervo extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        btnLimpar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -157,6 +168,7 @@ public class FrmAcervo extends javax.swing.JFrame {
 
         btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recurso/edit.png"))); // NOI18N
         btnEditar.setText("Editar");
+        btnEditar.setToolTipText("Edita a linha selecionada.");
         btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditarActionPerformed(evt);
@@ -165,6 +177,7 @@ public class FrmAcervo extends javax.swing.JFrame {
 
         btnInserir1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recurso/image-gallery.png"))); // NOI18N
         btnInserir1.setText("Inserir");
+        btnInserir1.setToolTipText("Insere um novo livro.");
         btnInserir1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnInserir1ActionPerformed(evt);
@@ -173,6 +186,7 @@ public class FrmAcervo extends javax.swing.JFrame {
 
         btnApagar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recurso/delete.png"))); // NOI18N
         btnApagar.setText("Apagar");
+        btnApagar.setToolTipText("Apaga a linha selecionada.");
         btnApagar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnApagarActionPerformed(evt);
@@ -221,6 +235,11 @@ public class FrmAcervo extends javax.swing.JFrame {
     });
 
     cbGenero.setToolTipText("Selecione para realizar a busca.");
+    cbGenero.addFocusListener(new java.awt.event.FocusAdapter() {
+        public void focusLost(java.awt.event.FocusEvent evt) {
+            cbGeneroFocusLost(evt);
+        }
+    });
     cbGenero.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             cbGeneroActionPerformed(evt);
@@ -320,6 +339,15 @@ public class FrmAcervo extends javax.swing.JFrame {
             .addContainerGap(53, Short.MAX_VALUE))
     );
 
+    btnLimpar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recurso/broom.png"))); // NOI18N
+    btnLimpar.setText("Limpar");
+    btnLimpar.setToolTipText("Limpa os filtros de busca.");
+    btnLimpar.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnLimparActionPerformed(evt);
+        }
+    });
+
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
     jPanel1Layout.setHorizontalGroup(
@@ -329,20 +357,22 @@ public class FrmAcervo extends javax.swing.JFrame {
             .addContainerGap()
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addGroup(jPanel1Layout.createSequentialGroup()
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addComponent(btnInserir1)
+            .addGap(557, 915, Short.MAX_VALUE)
+            .addComponent(jLabel3))
+        .addGroup(jPanel1Layout.createSequentialGroup()
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(557, 557, 557)
-                    .addComponent(jLabel3))
+                    .addGap(53, 53, 53)
+                    .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 814, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(180, 180, 180)
+                    .addComponent(btnInserir1)
                     .addGap(53, 53, 53)
                     .addComponent(btnEditar)
                     .addGap(49, 49, 49)
-                    .addComponent(btnApagar))))
-        .addGroup(jPanel1Layout.createSequentialGroup()
-            .addGap(45, 45, 45)
-            .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 814, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnApagar)
+                    .addGap(48, 48, 48)
+                    .addComponent(btnLimpar)))
             .addGap(0, 0, Short.MAX_VALUE))
     );
     jPanel1Layout.setVerticalGroup(
@@ -355,12 +385,13 @@ public class FrmAcervo extends javax.swing.JFrame {
             .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(8, 8, 8)
             .addComponent(jLabel3)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(btnApagar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(btnInserir1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGap(23, 23, 23))
+                .addComponent(btnInserir1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(35, 35, 35))
     );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -467,19 +498,24 @@ public class FrmAcervo extends javax.swing.JFrame {
     }//GEN-LAST:event_btnApagarActionPerformed
 
     private void cbDisponivelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDisponivelActionPerformed
-        // TODO add your handling code here:
+    String genero = (String) cbGenero.getSelectedItem();
+    if (genero.equals("Todos")) {
+        atualizarTabela(); // mostra todos
+    } else {
+        atualizarTabela("disponivel", genero); // filtra
+    }
     }//GEN-LAST:event_cbDisponivelActionPerformed
 
     private void cbAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbAutorActionPerformed
-        // TODO add your handling code here:
+    atualizarTabela("autor", cbAutor.getSelectedItem().toString());
     }//GEN-LAST:event_cbAutorActionPerformed
 
     private void cbGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbGeneroActionPerformed
-        // TODO add your handling code here:
+atualizarTabela("genero", cbGenero.getSelectedItem().toString());
     }//GEN-LAST:event_cbGeneroActionPerformed
 
     private void cbTituloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTituloActionPerformed
-        // TODO add your handling code here:
+    atualizarTabela("titulo", cbTitulo.getSelectedItem().toString());
     }//GEN-LAST:event_cbTituloActionPerformed
 
     private void cbDoadorFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cbDoadorFocusGained
@@ -487,7 +523,7 @@ public class FrmAcervo extends javax.swing.JFrame {
     }//GEN-LAST:event_cbDoadorFocusGained
 
     private void cbDoadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDoadorActionPerformed
-        // TODO add your handling code here:
+    atualizarTabela("doador", cbDoador.getSelectedItem().toString());
     }//GEN-LAST:event_cbDoadorActionPerformed
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
@@ -550,6 +586,7 @@ for (Livro l : dao.listar()) {
     }
 }
 cbDisponivel.setModel(modeloDisponivel);
+
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -561,10 +598,30 @@ cbDisponivel.setModel(modeloDisponivel);
 
     }//GEN-LAST:event_formWindowOpened
 
+    private void cbGeneroFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cbGeneroFocusLost
+                cbDisponivel.setSelectedItem(valorInicialDisponivel);
+        atualizarTabela(); // atualiza a tabela mostrando "todos"
+
+    }//GEN-LAST:event_cbGeneroFocusLost
+
+    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
+    cbDoador.setSelectedIndex(0);      // ou valorInicialDoador se quiser
+        cbGenero.setSelectedIndex(0);
+        cbTitulo.setSelectedIndex(0);
+        cbAutor.setSelectedIndex(0);
+        cbDisponivel.setSelectedIndex(0);
+
+        // Atualiza a tabela para mostrar todos os registros
+        atualizarTabela();        // TODO add your handling code here:
+    }//GEN-LAST:event_btnLimparActionPerformed
+
     /**
      * @param args the command line arguments
      */
-     
+     // 1️⃣ variável para guardar o valor inicial
+
+// 2️⃣ depois de preencher o combo, salvar o valor inicial
+
      private void preencherTabela() {
         modelo.getDataVector().clear();
         try {
@@ -637,6 +694,7 @@ cbDisponivel.setModel(modeloDisponivel);
     private javax.swing.JButton btnApagar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnInserir1;
+    private javax.swing.JButton btnLimpar;
     private javax.swing.JComboBox<String> cbAutor;
     private javax.swing.JComboBox<String> cbDisponivel;
     private javax.swing.JComboBox<Usuario> cbDoador;

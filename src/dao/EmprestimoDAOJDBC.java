@@ -49,7 +49,6 @@ public class EmprestimoDAOJDBC implements EmprestimoDAO{
                 .append("UPDATE emprestimo SET ")
                 .append("id_livro = ?, ")
                 .append("id_usuario = ?, ")
-                .append("data_doacao = ?,  ")
                 .append("data_prevista = ?,  ")
                 .append("data_devolucao = ?,  ")
                 .append("WHERE id_emprestimo = ?");
@@ -79,6 +78,75 @@ public class EmprestimoDAOJDBC implements EmprestimoDAO{
         linha = DAOGenerico.executarComando(delete, id_emprestimo);
         return linha;
     }
+    
+    public List<Emprestimo> listarPorCampo(String campo, Object valor) {
+    List<Emprestimo> emprestimos = new ArrayList<>();
+    boolean filtrar = valor != null && !valor.toString().equalsIgnoreCase("Todos");
+
+    StringBuilder sqlBuilder = new StringBuilder();
+    sqlBuilder.append("SELECT e.id_emprestimo, e.data_emprestimo, e.data_prevista, e.data_devolucao, ")
+              .append("u.id_usuario, u.nome, u.telefone, u.email, ")
+              .append("l.id_livro, l.titulo, l.autor, l.genero ")
+              .append("FROM emprestimo e ")
+              .append("JOIN usuario u ON e.id_usuario = u.id_usuario ")
+              .append("JOIN livro l ON e.id_livro = l.id_livro ");
+
+    if (filtrar) {
+        switch (campo) {
+            case "usuario":
+                sqlBuilder.append("WHERE u.nome = ? ");
+                break;
+            case "livro":
+                sqlBuilder.append("WHERE l.titulo = ? ");
+                break;
+            case "data_emprestimo":
+                sqlBuilder.append("WHERE e.data_emprestimo = ? ");
+                break;
+            default:
+                sqlBuilder.append("WHERE e.").append(campo).append(" = ? ");
+                break;
+        }
+    }
+
+    sqlBuilder.append("ORDER BY e.id_emprestimo");
+    String sql = sqlBuilder.toString();
+
+    try {
+        ResultSet rs;
+        if (filtrar) {
+            rs = DAOGenerico.executarConsulta(sql, valor);
+        } else {
+            rs = DAOGenerico.executarConsulta(sql);
+        }
+
+        while (rs.next()) {
+            Usuario usuario = new Usuario();
+            usuario.setId_usuario(rs.getInt("id_usuario"));
+            usuario.setNome(rs.getString("nome"));
+            usuario.setTelefone(rs.getString("telefone"));
+            usuario.setEmail(rs.getString("email"));
+
+            Livro livro = new Livro();
+            livro.setId_livro(rs.getInt("id_livro"));
+            livro.setTitulo(rs.getString("titulo"));
+            livro.setAutor(rs.getString("autor"));
+            livro.setGenero(rs.getString("genero"));
+
+            Emprestimo emprestimo = new Emprestimo();
+            emprestimo.setId_emprestimo(rs.getInt("id_emprestimo"));
+            emprestimo.setData_emprestimo(rs.getDate("data_emprestimo"));
+            emprestimo.setData_prevista(rs.getDate("data_prevista"));
+            emprestimo.setData_devolucao(rs.getDate("data_devolucao"));
+            emprestimo.setId_usuario(usuario);
+            emprestimo.setId_livro(livro);
+
+            emprestimos.add(emprestimo);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return emprestimos;
+}
 
     @Override
     public List<Emprestimo> listar() {

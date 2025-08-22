@@ -88,6 +88,72 @@ public class LivroDAOJDBC implements LivroDAO{
         linha = DAOGenerico.executarComando(delete, id_livro);
         return linha;
     }
+    
+    public List<Livro> listarPorCampo(String campo, Object valor) {
+    List<Livro> livros = new ArrayList<>();
+    boolean filtrar = valor != null && !valor.toString().equalsIgnoreCase("Todos");
+
+    StringBuilder sqlBuilder = new StringBuilder();
+    sqlBuilder.append("SELECT l.id_livro, l.id_doador, l.titulo, l.autor, l.genero, l.disponivel, l.data_doacao, ")
+              .append("u.id_usuario, u.nome, u.telefone, u.email ")
+              .append("FROM livro l ")
+              .append("JOIN usuario u ON l.id_doador = u.id_usuario ");
+
+    if (filtrar) {
+        switch (campo) {
+            case "doador":
+sqlBuilder.append("WHERE u.nome = ? ");
+                break;
+            case "disponivel":
+sqlBuilder.append("WHERE l.disponivel = ? ");
+                break;
+            default:
+sqlBuilder.append("WHERE l.").append(campo).append(" = ? ");
+                break;
+        }
+    }
+
+    sqlBuilder.append("ORDER BY l.id_livro");
+    String sql = sqlBuilder.toString();
+
+    try {
+        ResultSet rs;
+        if (filtrar) {
+            // Disponível é boolean
+            if (campo.equals("disponivel") && valor instanceof String) {
+                boolean disponivel = valor.equals("Sim");
+                rs = DAOGenerico.executarConsulta(sql, disponivel);
+            } else {
+                rs = DAOGenerico.executarConsulta(sql, valor);
+            }
+        } else {
+            rs = DAOGenerico.executarConsulta(sql);
+        }
+
+        while (rs.next()) {
+            Usuario usuario = new Usuario();
+            usuario.setId_usuario(rs.getInt("id_doador"));
+            usuario.setNome(rs.getString("nome"));
+            usuario.setTelefone(rs.getString("telefone"));
+            usuario.setEmail(rs.getString("email"));
+
+            Livro livro = new Livro();
+            livro.setId_livro(rs.getInt("id_livro"));
+            livro.setTitulo(rs.getString("titulo"));
+            livro.setAutor(rs.getString("autor"));
+            livro.setGenero(rs.getString("genero"));
+            livro.setData_doacao(rs.getDate("data_doacao"));
+            livro.setDisponivel(rs.getBoolean("disponivel"));
+            livro.setId_doador(usuario);
+
+            livros.add(livro);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return livros;
+}
+
 
     @Override
     public List<Livro> listar() {

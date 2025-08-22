@@ -73,6 +73,42 @@ public class UsuarioDAOJDBC implements UsuarioDAO{
         linha = DAOGenerico.executarComando(delete, id_usuario);
         return linha;
     }
+    public List<Usuario> listarUsuarioPorCampo(String campo, Object valor) {
+    List<Usuario> usuarios = new ArrayList<>();
+    boolean filtrar = valor != null && !valor.toString().equalsIgnoreCase("Todos");
+
+    StringBuilder sqlBuilder = new StringBuilder();
+    sqlBuilder.append("SELECT u.id_usuario, u.nome, u.telefone, u.email ")
+              .append("FROM usuario u ");
+
+    if (filtrar) {
+        sqlBuilder.append("WHERE u.").append(campo).append(" = ? ");
+    }
+
+    sqlBuilder.append("ORDER BY u.id_usuario");
+    String sql = sqlBuilder.toString();
+
+    try {
+        ResultSet rs;
+        if (filtrar) {
+            rs = DAOGenerico.executarConsulta(sql, valor);
+        } else {
+            rs = DAOGenerico.executarConsulta(sql);
+        }
+
+        while (rs.next()) {
+            Usuario usuario = new Usuario();
+            usuario.setId_usuario(rs.getInt("id_usuario"));
+            usuario.setNome(rs.getString("nome"));
+            usuario.setTelefone(rs.getString("telefone"));
+            usuario.setEmail(rs.getString("email"));
+            usuarios.add(usuario);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return usuarios;
+}
 
     @Override
     public List<Usuario> listar() {
