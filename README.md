@@ -63,7 +63,7 @@ src/
 
 ---
 
-## **Funcionalidades**
+## Funcionalidades
 
 1. **Gestão de Usuários**
    - Cadastro de usuários
@@ -82,7 +82,7 @@ src/
 
 ---
 
-## **Configuração e Instalação**
+## Configuração e Instalação
 
 **Pré-requisitos:**
 - Java JDK 8 ou superior
@@ -110,7 +110,7 @@ src/
 
 ---
 
-## **Estrutura do Banco de Dados (Exemplo MySQL)**
+## Estrutura do Banco de Dados (Exemplo MySQL)
 
 Principais Tabelas:
 - usuarios - Dados dos usuários
@@ -120,7 +120,7 @@ Principais Tabelas:
   
 ---
 
-## **Padrões de Projeto Utilizados**
+## Padrões de Projeto Utilizados
 
 - **DAO (Data Access Object):**
   - Interfaces DAO para cada entidade
@@ -132,7 +132,7 @@ Principais Tabelas:
 
 ---
 
-## **Contexto**
+## Contexto
 
 Projeto desenvolvido com foco em boas práticas de Programação Orientada a Objetos, aplicando conceitos como:
 
@@ -151,3 +151,4 @@ Projeto desenvolvido com foco em boas práticas de Programação Orientada a Obj
 
 **Lidia Lisboa**  
 [GitHub](https://github.com/LidiaLis)
+
