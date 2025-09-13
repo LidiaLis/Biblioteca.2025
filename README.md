@@ -6,7 +6,7 @@ Este é um sistema desktop desenvolvido em Java para gerenciamento de uma biblio
 
 ## **Descrição do Projeto**
 
-O sistema realiza o controle completo de uma biblioteca, incluindo cadastro de livros, gestão de usuários, controle de empréstimos e devoluções, além de consultas e geração de relatórios. O p[...]
+O sistema realiza o controle completo de uma biblioteca, incluindo cadastro de livros, gestão de usuários, além de controle de empréstimos e devoluções. O projeto visa proporcionar uma experiência intuitiva, utilizando os recursos visuais do NetBeans para criação de interfaces gráficas (frames Swing).
 
 ---
 
@@ -150,4 +150,5 @@ Projeto desenvolvido com foco em boas práticas de Programação Orientada a Obj
 
 **Lidia Lisboa**  
 [GitHub](https://github.com/LidiaLis)
+
 
