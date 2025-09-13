@@ -4,13 +4,13 @@ Este é um sistema desktop desenvolvido em Java para gerenciamento de uma biblio
 
 ---
 
-## Descrição do Projeto
+## **Descrição do Projeto**
 
-O sistema realiza o controle completo de uma biblioteca, incluindo cadastro de livros, gestão de usuários, controle de empréstimos e devoluções, além de consultas e geração de relatórios. O projeto visa proporcionar uma experiência intuitiva, utilizando os recursos visuais do NetBeans para criação de interfaces gráficas (frames Swing).
+O sistema realiza o controle completo de uma biblioteca, incluindo cadastro de livros, gestão de usuários, controle de empréstimos e devoluções, além de consultas e geração de relatórios. O p[...]
 
 ---
 
-## Tecnologias e Ferramentas
+## **Tecnologias e Ferramentas**
 
 - **Linguagem:** Java (JDK 8+)
 - **Interface Gráfica:** Java Swing (JFrame, JPanel, JTable, etc.)
@@ -21,9 +21,8 @@ O sistema realiza o controle completo de uma biblioteca, incluindo cadastro de l
     
 ---
 
-## Estrutura do Projeto
+## **Estrutura do Projeto**
 
-```
 src/
 ├── aplicacao/
 │   ├── Biblioteca.java           # Tela principal do sistema
@@ -63,7 +62,7 @@ src/
 
 ---
 
-## Funcionalidades
+## **Funcionalidades**
 
 1. **Gestão de Usuários**
    - Cadastro de usuários
@@ -82,7 +81,7 @@ src/
 
 ---
 
-## Configuração e Instalação
+## **Configuração e Instalação**
 
 **Pré-requisitos:**
 - Java JDK 8 ou superior
@@ -110,7 +109,7 @@ src/
 
 ---
 
-## Estrutura do Banco de Dados (Exemplo MySQL)
+## **Estrutura do Banco de Dados (Exemplo MySQL)**
 
 Principais Tabelas:
 - usuarios - Dados dos usuários
@@ -120,7 +119,7 @@ Principais Tabelas:
   
 ---
 
-## Padrões de Projeto Utilizados
+## **Padrões de Projeto Utilizados**
 
 - **DAO (Data Access Object):**
   - Interfaces DAO para cada entidade
@@ -132,7 +131,7 @@ Principais Tabelas:
 
 ---
 
-## Contexto
+## **Contexto**
 
 Projeto desenvolvido com foco em boas práticas de Programação Orientada a Objetos, aplicando conceitos como:
 
@@ -147,8 +146,7 @@ Projeto desenvolvido com foco em boas práticas de Programação Orientada a Obj
 
 ---
 
-## Autor
+## **Autor**
 
 **Lidia Lisboa**  
 [GitHub](https://github.com/LidiaLis)
-
