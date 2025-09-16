@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import modelo.Emprestimo;
 import modelo.Usuario;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import modelo.Livro;
 
@@ -314,20 +315,33 @@ public enum Modo {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-     DefaultComboBoxModel<Usuario> modeloLeitores = new DefaultComboBoxModel<>();
+    DefaultComboBoxModel<Usuario> modeloLeitores = new DefaultComboBoxModel<>();
     UsuarioDAO usuarioDAO = new UsuarioDAOJDBC();
-
     for (Usuario u : usuarioDAO.listar()) {
         modeloLeitores.addElement(u);
     }
     cbUsuario.setModel(modeloLeitores);
 
-    // Atualiza a combo de livros (título)
     DefaultComboBoxModel<Livro> modeloLivro = new DefaultComboBoxModel<>();
     LivroDAO livroDAO = new LivroDAOJDBC();
+    EmprestimoDAO emprestimoDAO = new EmprestimoDAOJDBC();
 
-    for (Livro l : livroDAO.listar()) {
-        modeloLivro.addElement(l);
+    List<Livro> todosOsLivros = livroDAO.listar();
+    List<Emprestimo> emprestimos = emprestimoDAO.listar();
+
+    for (Livro livro : todosOsLivros) {
+        boolean estaEmprestado = false;
+        for (Emprestimo emp : emprestimos) {
+            // Só bloqueia se status for "Emprestado"
+            if (emp.getId_livro().getId_livro() == livro.getId_livro() &&
+                "Emprestado".equals(emp.getStatus().toString())) {
+                estaEmprestado = true;
+                break;
+            }
+        }
+        if (!estaEmprestado) {
+            modeloLivro.addElement(livro);
+        }
     }
     cbTitulo.setModel(modeloLivro);
 
@@ -467,6 +481,14 @@ try {
                     JOptionPane.showMessageDialog(this, "Selecione um leitor e um livro válidos.", "Erro", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                
+                if (dataDevolucao != null && dataDevolucao.before(dataEmprestimo)) {
+                    JOptionPane.showMessageDialog(this,
+                        "A data de devolução deve ser igual ou posterior à data de empréstimo.",
+                        "Erro de data",
+                        JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
                 emprestimoSelecionado.setData_emprestimo(dataEmprestimo);
                 emprestimoSelecionado.setData_prevista(dataPrevista);
@@ -511,6 +533,16 @@ try {
                     return;
                 }
 
+                // Validação: devolução não pode ser antes do empréstimo
+                Date dataEmprestimo = emprestimoSelecionado.getData_emprestimo();
+                if (dataEmprestimo != null && dataDevolucao.before(dataEmprestimo)) {
+                    JOptionPane.showMessageDialog(this,
+                        "A data de devolução deve ser igual ou posterior à data de empréstimo.",
+                        "Erro de data",
+                        JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 emprestimoSelecionado.setData_devolucao(dataDevolucao);
 
                 Date dataPrevista = emprestimoSelecionado.getData_prevista();
@@ -536,9 +568,9 @@ try {
                 }
                 break;
             }
-        }
+            }
 
-    } catch (Exception e) {
+    }catch (Exception e){
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Erro inesperado: " + e.getMessage());
     }

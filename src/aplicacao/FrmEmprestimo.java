@@ -60,7 +60,7 @@ public class FrmEmprestimo extends javax.swing.JFrame {
             emprestimo.getId_usuario().getNome(),
             formato.format(emprestimo.getData_emprestimo()),
             formato.format(emprestimo.getData_prevista()),
-            emprestimo.getData_devolucao() != null ? formato.format(emprestimo.getData_devolucao()) : "",
+            emprestimo.getData_devolucao() != null ? formato.format(emprestimo.getData_devolucao()) : "-",
             emprestimo.getStatus()
         });
     }
@@ -537,64 +537,76 @@ private void atualizarTabela() {
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
 EmprestimoDAO dao = new EmprestimoDAOJDBC();
 
-DefaultComboBoxModel<Usuario> modeloUsuarios = new DefaultComboBoxModel<>();
-for (Emprestimo l : dao.listar()) {
-    Usuario u = l.getId_usuario();
-    boolean jaExiste = false;
-    for (int i = 0; i < modeloUsuarios.getSize(); i++) {
-        if (modeloUsuarios.getElementAt(i).getId_usuario() == u.getId_usuario()) {
-            jaExiste = true;
-            break;
+    DefaultComboBoxModel<Usuario> modeloUsuarios = new DefaultComboBoxModel<>();
+    for (Emprestimo l : dao.listar()) {
+        Usuario u = l.getId_usuario();
+        boolean jaExiste = false;
+        for (int i = 0; i < modeloUsuarios.getSize(); i++) {
+            if (modeloUsuarios.getElementAt(i).getId_usuario() == u.getId_usuario()) {
+                jaExiste = true;
+                break;
+            }
+        }
+        if (!jaExiste) {
+            modeloUsuarios.addElement(u); // adiciona só se ainda não tiver
         }
     }
-    if (!jaExiste) {
-        modeloUsuarios.addElement(u); // adiciona só se ainda não tiver
-    }
-}
-cbUsuario.setModel(modeloUsuarios);
+    cbUsuario.setModel(modeloUsuarios);
 
-// Título
-DefaultComboBoxModel<String> modeloTitulo = new DefaultComboBoxModel<>();
-for (Emprestimo l : dao.listar()) {
-    String titulo = l.getId_livro().getTitulo();
-    if (modeloTitulo.getIndexOf(titulo) == -1) {
-        modeloTitulo.addElement(titulo);
+    // Título
+    DefaultComboBoxModel<String> modeloTitulo = new DefaultComboBoxModel<>();
+    for (Emprestimo l : dao.listar()) {
+        String titulo = l.getId_livro().getTitulo();
+        if (modeloTitulo.getIndexOf(titulo) == -1) {
+            modeloTitulo.addElement(titulo);
+        }
     }
-}
-cbTitulo.setModel(modeloTitulo);
+    cbTitulo.setModel(modeloTitulo);
 
-// Data de Empréstimo
-DefaultComboBoxModel<String> modeloDataEmprestimo = new DefaultComboBoxModel<>();
-SimpleDateFormat sdfEmp = new SimpleDateFormat("MM/yyyy");
-for (Emprestimo l : dao.listar()) {
-    String dataEmp = sdfEmp.format(l.getData_emprestimo());
-    if (modeloDataEmprestimo.getIndexOf(dataEmp) == -1) {
-        modeloDataEmprestimo.addElement(dataEmp);
-    }
-}
-cbDataEmprestimo.setModel(modeloDataEmprestimo);
+    // Data de Empréstimo
+    DefaultComboBoxModel<String> modeloDataEmprestimo = new DefaultComboBoxModel<>();
+    SimpleDateFormat sdfEmp = new SimpleDateFormat("MM/yyyy");
 
-// Data Prevista
-DefaultComboBoxModel<String> modeloDataPrevista = new DefaultComboBoxModel<>();
-SimpleDateFormat sdfPrev = new SimpleDateFormat("MM/yyyy");
-for (Emprestimo l : dao.listar()) {
-    String dataPrev = sdfPrev.format(l.getData_prevista());
-    if (modeloDataPrevista.getIndexOf(dataPrev) == -1) {
-        modeloDataPrevista.addElement(dataPrev);
+    for (Emprestimo l : dao.listar()) {
+        if (l.getData_emprestimo() != null) {
+            String dataEmp = sdfEmp.format(l.getData_emprestimo());
+            if (modeloDataEmprestimo.getIndexOf(dataEmp) == -1) {
+                modeloDataEmprestimo.addElement(dataEmp);
+            }
+        }
+        // Se for null, simplesmente ignora
     }
-}
-cbDataPrevista.setModel(modeloDataPrevista);
 
-// Data Devolução
-DefaultComboBoxModel<String> modeloDataDevolucao = new DefaultComboBoxModel<>();
-SimpleDateFormat sdfDev = new SimpleDateFormat("MM/yyyy");
-for (Emprestimo l : dao.listar()) {
-    String dataPrev = sdfDev.format(l.getData_devolucao());
-    if (modeloDataDevolucao.getIndexOf(dataPrev) == -1) {
-        modeloDataDevolucao.addElement(dataPrev);
+    cbDataEmprestimo.setModel(modeloDataEmprestimo);
+
+    // Data Prevista
+    DefaultComboBoxModel<String> modeloDataPrevista = new DefaultComboBoxModel<>();
+    SimpleDateFormat sdfPrev = new SimpleDateFormat("MM/yyyy");
+
+    for (Emprestimo l : dao.listar()) {
+        if (l.getData_prevista() != null) {
+            String dataPrev = sdfPrev.format(l.getData_prevista());
+            if (modeloDataPrevista.getIndexOf(dataPrev) == -1) {
+                modeloDataPrevista.addElement(dataPrev);
+            }
+        }
     }
-}
-cbDataDevolucao.setModel(modeloDataDevolucao);
+    cbDataPrevista.setModel(modeloDataPrevista);
+
+    // Data Devolução
+    DefaultComboBoxModel<String> modeloDataDevolucao = new DefaultComboBoxModel<>();
+    SimpleDateFormat sdfDev = new SimpleDateFormat("MM/yyyy");
+
+    for (Emprestimo l : dao.listar()) {
+        if (l.getData_devolucao() != null) {
+            String dataDev = sdfDev.format(l.getData_devolucao());
+            if (modeloDataDevolucao.getIndexOf(dataDev) == -1) {
+                modeloDataDevolucao.addElement(dataDev);
+            }
+        }
+    }
+    cbDataDevolucao.setModel(modeloDataDevolucao);
+
 
 
     }//GEN-LAST:event_formWindowGainedFocus
@@ -654,7 +666,7 @@ cbDataDevolucao.setModel(modeloDataDevolucao);
         for (Emprestimo emprestimo : emprestimoDAO.listar()) {
             String dataDevolucao = emprestimo.getData_devolucao() != null
                     ? formato.format(emprestimo.getData_devolucao())
-                    : "—"; // mostra traço se ainda não devolveu
+                    : "-"; // mostra traço se ainda não devolveu
 
             String status;
             if (emprestimo.getData_devolucao() == null) {

@@ -62,9 +62,9 @@ public class Emprestimo{
     }
     
     public Date getData_devolucao() {
-        return data_prevista;
+        return data_devolucao;
     }
-    public void setData_devolucao(Date data_prevista){
+    public void setData_devolucao(Date data_devolucao){
         this.data_devolucao = data_devolucao;
     }
     
