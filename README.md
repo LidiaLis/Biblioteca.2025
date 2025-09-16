@@ -27,22 +27,19 @@ O sistema realiza o controle completo de uma biblioteca, incluindo cadastro de l
 src/
 ├── aplicacao/
 │   ├── Biblioteca.java         # Tela principal do sistema
-│   ├── DialogAcervo.java       # Tela principal do sistema
-│   ├── DialogUsuarios.java     # Tela principal do sistema
-│   ├── DialogEmprestimo.java   # Tela principal do sistema
-│   ├── DialogDevolucao.java    # Tela principal do sistema
+│   ├── DialogAcervo.java       # Pop-up para preenchimento de dados do frmAcervo
+│   ├── DialogUsuarios.java     # Pop-up para preenchimento de dados do frmUsuario
+│   ├── DialogEmprestimo.java   # Pop-up para preenchimento de dados do frmEmprestimo
 │   ├── Valid.java              # Valida telefone e e-mail dos usuários
 │   ├── frmPrincipal1.java      # Tela principal do sistema
 │   ├── frmAcervo.java          # Gestão de livros
 │   ├── frmUsuario.java         # Gestão de usuários
-│   ├── frmEmprestimo.java      # Controle de empréstimos
-│   └── frmDevolucao.java       # Controle de devoluções
+│   └── frmEmprestimo.java      # Controle de empréstimos e devoluções
 │
 ├── modelo/
 │   ├── Livro.java              # Entidade Livro
 │   ├── Usuario.java            # Entidade Usuário
-│   ├── Emprestimo.java         # Entidade Empréstimo
-│   └── Devolucao.java          # Entidade Devolução
+│   └── Emprestimo.java         # Entidade Empréstimo
 │
 ├── dao/
 │   ├── DAOGenerico.java        # Conexão com banco de dados
@@ -52,9 +49,7 @@ src/
 │   ├── UsuarioDAO.java         # Interface DAO de Usuário
 │   ├── UsuarioDAOJDBC.java     # Classe DAO de Usuário
 │   ├── EmprestimoDAO.java      # Interface DAO de Empréstimo
-│   ├── EmprestimoDAOJDBC.java  # Classe DAO de Empréstimo
-│   ├── DevolucaoDAO.java       # Interface DAO de Devolução
-│   └── DevolucaoDAOJDBC.java   # Classe DAO de Devolução
+│   └── EmprestimoDAOJDBC.java  # Classe DAO de Empréstimo
 │
 └── recurso/
     ├── ScripBiblioteca.sql     # Script do banco de dados
@@ -150,5 +145,6 @@ Projeto desenvolvido com foco em boas práticas de Programação Orientada a Obj
 
 **Lidia Lisboa**  
 [GitHub](https://github.com/LidiaLis)
+
 
 
