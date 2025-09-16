@@ -25,50 +25,104 @@ import modelo.Livro;
  * @author Lídia Lis
  */
 public class DialogEmprestimo extends javax.swing.JDialog {
-    
-   private Emprestimo emprestimoSelecionado = null;
-    
+        
     /**
      * Creates new form DialogInserir
-     * @param parent
-     * @param modal
-     * @param idEmprestimo
+     *
      */
-    public DialogEmprestimo(java.awt.Frame parent, boolean modal, Integer idEmprestimo) {
+    
+public enum Modo {
+        INSERIR,
+        EDITAR,
+        DEVOLVER
+    }
+
+    private Emprestimo emprestimoSelecionado;
+    private final Modo modoAtual;
+
+    public DialogEmprestimo(java.awt.Frame parent, boolean modal, Modo modo, Integer idEmprestimo) {
         super(parent, modal);
+        this.modoAtual = modo;
+
         initComponents();
         setLocationRelativeTo(parent);
 
         if (idEmprestimo != null) {
             EmprestimoDAO dao = new EmprestimoDAOJDBC();
-            emprestimoSelecionado = dao.buscaPorId(idEmprestimo); // busca o empréstimo completo
+            emprestimoSelecionado = dao.buscaPorId(idEmprestimo);
 
             if (emprestimoSelecionado != null) {
-                preencherCamposSeEdicao();
-                btnInserirSalva.setText("Salvar Alterações");
+                preencherCampos();
             } else {
                 JOptionPane.showMessageDialog(this, "Empréstimo não encontrado!", "Erro", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            btnInserirSalva.setText("Inserir");
         }
+
+        configurarBotoes();
     }
 
-    private void preencherCamposSeEdicao() {
+    private void configurarBotoes() {
+    switch (modoAtual) {
+        case INSERIR:
+            btnInserirSalva.setText("Inserir");
+            ftxtData2.setEnabled(false); // data devolução desabilitada ao inserir
+            break;
+
+        case EDITAR:
+            btnInserirSalva.setText("Salvar Alterações");
+            ftxtData.setEnabled(true);
+            ftxtData1.setEnabled(true);
+            ftxtData2.setEnabled(true); // Habilita data devolução para edição
+            break;
+
+        case DEVOLVER:
+            btnInserirSalva.setText("Registrar Devolução");
+            ftxtData.setEnabled(false);
+            ftxtData1.setEnabled(false);
+            ftxtData2.setEnabled(true);
+            break;
+    }
+}
+
+
+    private void preencherCampos() {
     if (emprestimoSelecionado != null) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        ftxtData.setText(sdf.format(emprestimoSelecionado.getData_emprestimo()));
-        ftxtData1.setText(sdf.format(emprestimoSelecionado.getData_prevista()));
 
-        // Seleciona o livro
-        Livro livro = emprestimoSelecionado.getId_livro();
-        cbTitulo.setSelectedItem(livro);
+        if (modoAtual == Modo.EDITAR) {
+            // Preenche empréstimo e data prevista
+            if (emprestimoSelecionado.getData_emprestimo() != null) {
+                ftxtData.setText(sdf.format(emprestimoSelecionado.getData_emprestimo()));
+            }
+            if (emprestimoSelecionado.getData_prevista() != null) {
+                ftxtData1.setText(sdf.format(emprestimoSelecionado.getData_prevista()));
+            }
 
-        // Seleciona o leitor
-        Usuario usuario = emprestimoSelecionado.getId_usuario();
-        cbUsuario.setSelectedItem(usuario);
+            // Seleciona o livro
+            Livro livro = emprestimoSelecionado.getId_livro();
+            if (livro != null) {
+                cbTitulo.setSelectedItem(livro);
+            }
+
+            // Seleciona o leitor
+            Usuario usuario = emprestimoSelecionado.getId_usuario();
+            if (usuario != null) {
+                cbUsuario.setSelectedItem(usuario);
+            }
+
+        } else if (modoAtual == Modo.DEVOLVER) {
+            // Para devolução, normalmente só mostra a data de devolução
+            if (emprestimoSelecionado.getData_devolucao() != null) {
+                ftxtData2.setText(sdf.format(emprestimoSelecionado.getData_devolucao()));
+            }
+            cbTitulo.setEnabled(false);
+            cbUsuario.setEnabled(false);
+            ftxtData.setEnabled(false);
+            ftxtData1.setEnabled(false);
+        }
     }
-}   
+}
+  
     
    
     
@@ -228,7 +282,7 @@ public class DialogEmprestimo extends javax.swing.JDialog {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
-                .addGap(12, 12, 12)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(ftxtData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -240,7 +294,7 @@ public class DialogEmprestimo extends javax.swing.JDialog {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(ftxtData2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addComponent(btnInserirSalva)
                 .addGap(16, 16, 16))
         );
@@ -249,46 +303,25 @@ public class DialogEmprestimo extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-    // Atualiza a combo de usuários (leitor)
-    DefaultComboBoxModel<Usuario> modeloLeitores = new DefaultComboBoxModel<>();
+     DefaultComboBoxModel<Usuario> modeloLeitores = new DefaultComboBoxModel<>();
     UsuarioDAO usuarioDAO = new UsuarioDAOJDBC();
 
     for (Usuario u : usuarioDAO.listar()) {
         modeloLeitores.addElement(u);
     }
-
     cbUsuario.setModel(modeloLeitores);
 
-    // Se estiver em modo edição, seleciona o leitor correto
-    if (emprestimoSelecionado != null) {
-        for (int i = 0; i < modeloLeitores.getSize(); i++) {
-            Usuario u = modeloLeitores.getElementAt(i);
-            if (u.getId_usuario() == emprestimoSelecionado.getId_usuario().getId_usuario()) {
-                cbUsuario.setSelectedIndex(i);
-                break;
-            }
-        }
-    } else {
-        // Se for inserção, seleciona o primeiro leitor por padrão
-        if (modeloLeitores.getSize() > 0) {
-            cbUsuario.setSelectedIndex(0);
-        }
-    }
-    
     // Atualiza a combo de livros (título)
     DefaultComboBoxModel<Livro> modeloLivro = new DefaultComboBoxModel<>();
     LivroDAO livroDAO = new LivroDAOJDBC();
@@ -298,8 +331,18 @@ public class DialogEmprestimo extends javax.swing.JDialog {
     }
     cbTitulo.setModel(modeloLivro);
 
-    // Se estiver em modo edição, seleciona o título correto
+    // Se estiver em edição ou devolução, seleciona os já vinculados
     if (emprestimoSelecionado != null) {
+        // Usuário
+        for (int i = 0; i < modeloLeitores.getSize(); i++) {
+            Usuario u = modeloLeitores.getElementAt(i);
+            if (u.getId_usuario() == emprestimoSelecionado.getId_usuario().getId_usuario()) {
+                cbUsuario.setSelectedIndex(i);
+                break;
+            }
+        }
+
+        // Livro
         for (int i = 0; i < modeloLivro.getSize(); i++) {
             Livro l = modeloLivro.getElementAt(i);
             if (l.getId_livro() == emprestimoSelecionado.getId_livro().getId_livro()) {
@@ -307,8 +350,18 @@ public class DialogEmprestimo extends javax.swing.JDialog {
                 break;
             }
         }
+
+        // Se for devolução, bloqueia as combos
+        if (modoAtual == Modo.DEVOLVER) {
+            cbUsuario.setEnabled(false);
+            cbTitulo.setEnabled(false);
+        }
+
     } else {
-        // Se for inserção, seleciona o primeiro livro por padrão
+        // Se for inserção, seleciona os primeiros por padrão
+        if (modeloLeitores.getSize() > 0) {
+            cbUsuario.setSelectedIndex(0);
+        }
         if (modeloLivro.getSize() > 0) {
             cbTitulo.setSelectedIndex(0);
         }
@@ -324,78 +377,164 @@ public class DialogEmprestimo extends javax.swing.JDialog {
     }//GEN-LAST:event_cbTituloActionPerformed
 
     private void btnInserirSalvaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserirSalvaActionPerformed
-    try {
-        String dataEmprestimoTexto = ftxtData.getText().trim();
-        String dataPrevistaTexto = ftxtData1.getText().trim();
-
-        if (dataEmprestimoTexto.contains("_") || dataPrevistaTexto.contains("_")) {
-            JOptionPane.showMessageDialog(this, "Preencha todas as datas corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
+    
+try {
+        EmprestimoDAO dao = new EmprestimoDAOJDBC();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         sdf.setLenient(false);
 
-        Date dataEmprestimo;
-        Date dataPrevista;
+        switch (modoAtual) {
+            case INSERIR: {
+                String dataEmprestimoTexto = ftxtData.getText().trim();
+                String dataPrevistaTexto = ftxtData1.getText().trim();
+                String dataDevolucaoTexto = ftxtData2.getText().trim();
 
-        try {
-            dataEmprestimo = sdf.parse(dataEmprestimoTexto);
-            dataPrevista = sdf.parse(dataPrevistaTexto);
-        } catch (ParseException e) {
-            JOptionPane.showMessageDialog(this, "Datas inválidas. Use formato dd/MM/yyyy.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+                dataDevolucaoTexto= "";
+                if (dataEmprestimoTexto.contains("_") || dataPrevistaTexto.contains("_")) {
+                    JOptionPane.showMessageDialog(this, "Preencha todas as datas corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-        if (dataEmprestimo.after(new Date())) {
-            JOptionPane.showMessageDialog(this, "A data de empréstimo não pode ser futura!", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+                Date dataEmprestimo, dataPrevista;
+                try {
+                    dataEmprestimo = sdf.parse(dataEmprestimoTexto);
+                    dataPrevista = sdf.parse(dataPrevistaTexto);
+                } catch (ParseException e) {
+                    JOptionPane.showMessageDialog(this, "Datas inválidas. Use formato dd/MM/yyyy.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-        if (dataPrevista.before(dataEmprestimo)) {
-            JOptionPane.showMessageDialog(this, "A data prevista deve ser após a data de empréstimo.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+                if (dataEmprestimo.after(new Date())) {
+                    JOptionPane.showMessageDialog(this, "A data de empréstimo não pode ser futura!", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-        Usuario usuarioSelecionado = (Usuario) cbUsuario.getSelectedItem();
-        Livro livroSelecionado = (Livro) cbTitulo.getSelectedItem();
+                if (dataPrevista.before(dataEmprestimo)) {
+                    JOptionPane.showMessageDialog(this, "A data prevista deve ser após a data de empréstimo.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-        if (usuarioSelecionado == null || livroSelecionado == null) {
-            JOptionPane.showMessageDialog(this, "Selecione um leitor e um livro válidos.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+                Usuario usuarioSelecionado = (Usuario) cbUsuario.getSelectedItem();
+                Livro livroSelecionado = (Livro) cbTitulo.getSelectedItem();
 
-        EmprestimoDAO dao = new EmprestimoDAOJDBC();
+                if (usuarioSelecionado == null || livroSelecionado == null) {
+                    JOptionPane.showMessageDialog(this, "Selecione um leitor e um livro válidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-        if (emprestimoSelecionado == null) {
-            // INSERIR
-            Emprestimo novoEmprestimo = new Emprestimo();
-            novoEmprestimo.setData_emprestimo(dataEmprestimo);
-            novoEmprestimo.setData_prevista(dataPrevista);
-            novoEmprestimo.setId_usuario(usuarioSelecionado);
-            novoEmprestimo.setId_livro(livroSelecionado);
+                Emprestimo novo = new Emprestimo();
+                novo.setData_emprestimo(dataEmprestimo);
+                novo.setData_prevista(dataPrevista);
+                novo.setData_devolucao(null);
+                novo.setId_usuario(usuarioSelecionado);
+                novo.setId_livro(livroSelecionado);
+                novo.setStatus(Emprestimo.StatusEmprestimo.EMPRESTADO);
+                
 
-            int sucesso = dao.inserir(novoEmprestimo);
-            if (sucesso > 0) {
-                JOptionPane.showMessageDialog(this, "Empréstimo registrado com sucesso!");
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao registrar empréstimo.");
+
+                int sucesso = dao.inserir(novo);
+                if (sucesso > 0) {
+                    JOptionPane.showMessageDialog(this, "Empréstimo registrado com sucesso!");
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao registrar empréstimo.");
+                }
+                break;
             }
 
-        } else {
-            // EDITAR
-            emprestimoSelecionado.setData_emprestimo(dataEmprestimo);
-            emprestimoSelecionado.setData_prevista(dataPrevista);
-            emprestimoSelecionado.setId_usuario(usuarioSelecionado);
-            emprestimoSelecionado.setId_livro(livroSelecionado);
+            case EDITAR: {
+                String dataEmprestimoTexto = ftxtData.getText().trim();
+                String dataPrevistaTexto = ftxtData1.getText().trim();
 
-            int sucesso = dao.editar(emprestimoSelecionado);
-            if (sucesso > 0) {
-                JOptionPane.showMessageDialog(this, "Empréstimo atualizado com sucesso!");
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao atualizar empréstimo.");
+                if (dataEmprestimoTexto.contains("_") || dataPrevistaTexto.contains("_")) {
+                    JOptionPane.showMessageDialog(this, "Preencha todas as datas corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                Date dataEmprestimo, dataPrevista, dataDevolucao = null;
+                try {
+                    dataEmprestimo = sdf.parse(dataEmprestimoTexto);
+                    dataPrevista = sdf.parse(dataPrevistaTexto);
+                } catch (ParseException e) {
+                    JOptionPane.showMessageDialog(this, "Datas inválidas. Use formato dd/MM/yyyy.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                Usuario usuarioSelecionado = (Usuario) cbUsuario.getSelectedItem();
+                Livro livroSelecionado = (Livro) cbTitulo.getSelectedItem();
+
+                if (usuarioSelecionado == null || livroSelecionado == null) {
+                    JOptionPane.showMessageDialog(this, "Selecione um leitor e um livro válidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                emprestimoSelecionado.setData_emprestimo(dataEmprestimo);
+                emprestimoSelecionado.setData_prevista(dataPrevista);
+                emprestimoSelecionado.setId_usuario(usuarioSelecionado);
+                emprestimoSelecionado.setId_livro(livroSelecionado);
+                emprestimoSelecionado.setData_devolucao(dataDevolucao);
+
+                // Reavaliar status baseado na data_devolucao e data_prevista
+                if (dataDevolucao == null) {
+                    emprestimoSelecionado.setStatus(Emprestimo.StatusEmprestimo.EMPRESTADO);
+                } else {
+                    if (dataDevolucao.after(dataPrevista)) {
+                        emprestimoSelecionado.setStatus(Emprestimo.StatusEmprestimo.ATRASADO);
+                    } else {
+                        emprestimoSelecionado.setStatus(Emprestimo.StatusEmprestimo.DEVOLVIDO);
+                    }
+                }
+
+                int sucesso = dao.editar(emprestimoSelecionado);
+                if (sucesso > 0) {
+                    JOptionPane.showMessageDialog(this, "Empréstimo atualizado com sucesso!");
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao atualizar empréstimo.");
+                }
+                break;
+            }
+
+            case DEVOLVER: {
+                String dataDevolucaoTexto = ftxtData2.getText().trim();
+
+                if (dataDevolucaoTexto.contains("_")) {
+                    JOptionPane.showMessageDialog(this, "Preencha a data de devolução corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                Date dataDevolucao;
+                try {
+                    dataDevolucao = sdf.parse(dataDevolucaoTexto);
+                } catch (ParseException e) {
+                    JOptionPane.showMessageDialog(this, "Data de devolução inválida. Use formato dd/MM/yyyy.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                emprestimoSelecionado.setData_devolucao(dataDevolucao);
+
+                Date dataPrevista = emprestimoSelecionado.getData_prevista();
+                if (dataDevolucao.after(dataPrevista)) {
+                    long atrasoDias = (dataDevolucao.getTime() - dataPrevista.getTime()) / (1000 * 60 * 60 * 24);
+                    emprestimoSelecionado.setStatus(Emprestimo.StatusEmprestimo.ATRASADO);
+
+                    JOptionPane.showMessageDialog(this,
+                            "Devolução registrada.\nAtraso de " + atrasoDias + " dia(s).",
+                            "Atenção", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    emprestimoSelecionado.setStatus(Emprestimo.StatusEmprestimo.DEVOLVIDO);
+                    JOptionPane.showMessageDialog(this,
+                            "Devolução registrada dentro do prazo!",
+                            "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                }
+
+                int sucesso = dao.registrarDevolucao(emprestimoSelecionado);
+                if (sucesso > 0) {
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao registrar devolução.");
+                }
+                break;
             }
         }
 
@@ -403,7 +542,6 @@ public class DialogEmprestimo extends javax.swing.JDialog {
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Erro inesperado: " + e.getMessage());
     }
-
 
     }//GEN-LAST:event_btnInserirSalvaActionPerformed
 

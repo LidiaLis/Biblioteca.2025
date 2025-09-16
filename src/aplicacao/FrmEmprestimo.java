@@ -5,6 +5,7 @@
  */
 package aplicacao;
 
+import aplicacao.DialogEmprestimo.Modo;
 import dao.DAOFactory;
 import dao.EmprestimoDAO;
 import dao.EmprestimoDAOJDBC;
@@ -118,6 +119,7 @@ private void atualizarTabela() {
         cbStatus = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
         btnLimpar = new javax.swing.JButton();
+        btnDevolucao = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -277,6 +279,7 @@ private void atualizarTabela() {
     jLabel8.setText("  Data Devolução  ");
     jLabel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 0)));
 
+    cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Emprestado", "Devolvido", "Atrasado" }));
     cbStatus.setToolTipText("Selecione para realizar a busca.");
     cbStatus.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -315,7 +318,7 @@ private void atualizarTabela() {
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addGap(8, 8, 8)
                     .addComponent(jLabel4)))
-            .addGap(34, 34, 34)
+            .addGap(27, 27, 27)
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                 .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(cbDataDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -326,7 +329,7 @@ private void atualizarTabela() {
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addGap(56, 56, 56)
                     .addComponent(jLabel9)))
-            .addContainerGap(85, Short.MAX_VALUE))
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
     jPanel2Layout.setVerticalGroup(
         jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -370,6 +373,15 @@ private void atualizarTabela() {
         }
     });
 
+    btnDevolucao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recurso/exchange_1.png"))); // NOI18N
+    btnDevolucao.setText("Devolução");
+    btnDevolucao.setToolTipText("Edita a linha selecionada.");
+    btnDevolucao.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnDevolucaoActionPerformed(evt);
+        }
+    });
+
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
     jPanel1Layout.setHorizontalGroup(
@@ -381,21 +393,23 @@ private void atualizarTabela() {
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel3))))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(btnInserir1)
+                            .addGap(46, 46, 46)
+                            .addComponent(btnDevolucao)
+                            .addGap(42, 42, 42)
+                            .addComponent(btnEditar)
+                            .addGap(41, 41, 41)
+                            .addComponent(btnApagar)
+                            .addGap(39, 39, 39)
+                            .addComponent(btnLimpar)
+                            .addGap(136, 136, 136))))))
         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 694, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(136, 136, 136))
-        .addGroup(jPanel1Layout.createSequentialGroup()
-            .addGap(207, 207, 207)
-            .addComponent(btnInserir1)
-            .addGap(55, 55, 55)
-            .addComponent(btnEditar)
-            .addGap(47, 47, 47)
-            .addComponent(btnApagar)
-            .addGap(49, 49, 49)
-            .addComponent(btnLimpar)
-            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addContainerGap(57, Short.MAX_VALUE)
+            .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 855, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(57, 57, 57))
     );
     jPanel1Layout.setVerticalGroup(
         jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -411,13 +425,14 @@ private void atualizarTabela() {
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
+                    .addGap(29, 29, 29)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnInserir1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnApagar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(48, 48, 48))))
+                        .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(37, 37, 37))))
     );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -447,7 +462,7 @@ private void atualizarTabela() {
     }
 
     int idEmprestimo = (int) tblAcervo.getValueAt(linhaSelecionada, 0);
-    DialogEmprestimo dialog = new DialogEmprestimo(this, true, idEmprestimo);
+    DialogEmprestimo dialog = new DialogEmprestimo(this, true, Modo.EDITAR, idEmprestimo);
     dialog.setVisible(true);
 
     atualizarTabela();
@@ -455,7 +470,7 @@ private void atualizarTabela() {
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void btnInserir1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserir1ActionPerformed
-    DialogEmprestimo dialog = new DialogEmprestimo(this, true,null);
+    DialogEmprestimo dialog = new DialogEmprestimo(this, true, Modo.INSERIR, null);
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
 
@@ -513,11 +528,10 @@ private void atualizarTabela() {
     }//GEN-LAST:event_cbTituloActionPerformed
 
     private void cbUsuarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cbUsuarioFocusGained
-        // TODO add your handling code here:
     }//GEN-LAST:event_cbUsuarioFocusGained
 
     private void cbUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbUsuarioActionPerformed
-    atualizarTabela("leitor", cbUsuario.getSelectedItem().toString());
+    atualizarTabela("usuario", cbUsuario.getSelectedItem().toString());
     }//GEN-LAST:event_cbUsuarioActionPerformed
 
     private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
@@ -570,13 +584,26 @@ for (Emprestimo l : dao.listar()) {
     }
 }
 cbDataPrevista.setModel(modeloDataPrevista);
+
+// Data Devolução
+DefaultComboBoxModel<String> modeloDataDevolucao = new DefaultComboBoxModel<>();
+SimpleDateFormat sdfDev = new SimpleDateFormat("MM/yyyy");
+for (Emprestimo l : dao.listar()) {
+    String dataPrev = sdfDev.format(l.getData_devolucao());
+    if (modeloDataDevolucao.getIndexOf(dataPrev) == -1) {
+        modeloDataDevolucao.addElement(dataPrev);
+    }
+}
+cbDataDevolucao.setModel(modeloDataDevolucao);
+
+
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         ajustarLarguraColunas(tblAcervo);
-        tblAcervo.getColumnModel().getColumn(0).setPreferredWidth(60);   // Coluna ID
-        tblAcervo.getColumnModel().getColumn(1).setPreferredWidth(80);  // Coluna Disponivel
-        tblAcervo.getColumnModel().getColumn(2).setPreferredWidth(80);   // Coluna Data
+        
+        tblAcervo.getColumnModel().getColumn(6).setPreferredWidth(80);   // Coluna Data
+
 
 
     }//GEN-LAST:event_formWindowOpened
@@ -595,12 +622,26 @@ cbDataPrevista.setModel(modeloDataPrevista);
     }//GEN-LAST:event_cbDataEmprestimoActionPerformed
 
     private void cbDataDevolucaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDataDevolucaoActionPerformed
-        // TODO add your handling code here:
+    atualizarTabela("data_devolucao", cbDataDevolucao.getSelectedItem().toString());
     }//GEN-LAST:event_cbDataDevolucaoActionPerformed
 
     private void cbStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbStatusActionPerformed
-        // TODO add your handling code here:
+    atualizarTabela("status", cbStatus.getSelectedItem().toString());
     }//GEN-LAST:event_cbStatusActionPerformed
+
+    private void btnDevolucaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDevolucaoActionPerformed
+    int linhaSelecionada = tblAcervo.getSelectedRow();
+        if (linhaSelecionada == -1) {
+        JOptionPane.showMessageDialog(this, "Selecione uma linha para editar.");
+        return;
+        }
+
+        int idEmprestimo = (int) tblAcervo.getValueAt(linhaSelecionada, 0);
+        DialogEmprestimo dialog = new DialogEmprestimo(this, true, Modo.DEVOLVER, idEmprestimo);
+        dialog.setVisible(true);
+
+        atualizarTabela();
+    }//GEN-LAST:event_btnDevolucaoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -608,36 +649,62 @@ cbDataPrevista.setModel(modeloDataPrevista);
 
 
      private void preencherTabela() {
-        modelo.getDataVector().clear();
-        try {
-            for (Emprestimo emprestimo : emprestimoDAO.listar()) {
-                modelo.addRow(new Object[]{emprestimo.getId_emprestimo(),
-                                           emprestimo.getId_livro().getTitulo(),
-                                           emprestimo.getId_usuario().getNome(),
-                                           formato.format(emprestimo.getData_emprestimo()),
-                                           formato.format(emprestimo.getData_prevista())}
-                               );
+    modelo.getDataVector().clear();
+    try {
+        for (Emprestimo emprestimo : emprestimoDAO.listar()) {
+            String dataDevolucao = emprestimo.getData_devolucao() != null
+                    ? formato.format(emprestimo.getData_devolucao())
+                    : "—"; // mostra traço se ainda não devolveu
+
+            String status;
+            if (emprestimo.getData_devolucao() == null) {
+                status = "Em andamento";
+            } else if (emprestimo.getData_devolucao().after(emprestimo.getData_prevista())) {
+                status = "Devolvido com atraso";
+            } else {
+                status = "Devolvido no prazo";
             }
-        } catch (Exception e) {
-            throw e;
+
+            modelo.addRow(new Object[]{
+                emprestimo.getId_emprestimo(),
+                emprestimo.getId_livro().getTitulo(),
+                emprestimo.getId_usuario().getNome(),
+                formato.format(emprestimo.getData_emprestimo()),
+                formato.format(emprestimo.getData_prevista()),
+                dataDevolucao,
+                status
+            });
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Erro ao carregar tabela: " + e.getMessage(),
+                                      "Erro", JOptionPane.ERROR_MESSAGE);
     }
+}
+
     public void ajustarLarguraColunas(JTable table) {
     for (int col = 0; col < table.getColumnCount(); col++) {
         TableColumn column = table.getColumnModel().getColumn(col);
         int larguraMaxima = 0;
 
+        // Verifica largura das células
         for (int row = 0; row < table.getRowCount(); row++) {
             TableCellRenderer renderer = table.getCellRenderer(row, col);
             Component comp = table.prepareRenderer(renderer, row, col);
             larguraMaxima = Math.max(comp.getPreferredSize().width, larguraMaxima);
         }
 
+        // Verifica largura do cabeçalho
+        TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
+        Component headerComp = headerRenderer.getTableCellRendererComponent(
+                table, column.getHeaderValue(), false, false, 0, col);
+        larguraMaxima = Math.max(larguraMaxima, headerComp.getPreferredSize().width);
+
         // Adiciona uma margem extra
         larguraMaxima += 10;
         column.setPreferredWidth(larguraMaxima);
-        }
     }
+}
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -677,6 +744,7 @@ cbDataPrevista.setModel(modeloDataPrevista);
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane ScrollLivro;
     private javax.swing.JButton btnApagar;
+    private javax.swing.JButton btnDevolucao;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnInserir1;
     private javax.swing.JButton btnLimpar;

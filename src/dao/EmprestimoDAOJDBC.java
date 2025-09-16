@@ -170,6 +170,29 @@ public List<Emprestimo> listarPorCampo(String campo, Object valor) {
     return emprestimos;
 }
 
+public int registrarDevolucao(Emprestimo emprestimo) {
+    String sql = "UPDATE emprestimo SET data_devolucao = ?, status = ? WHERE id_emprestimo = ?";
+    int linhasAfetadas = 0;
+
+    try {
+        // Use os valores já definidos no objeto
+        java.sql.Date dataDevolucao = new java.sql.Date(emprestimo.getData_devolucao().getTime());
+        String status = emprestimo.getStatus().name();
+
+        linhasAfetadas = DAOGenerico.executarComando(sql,
+            dataDevolucao,
+            status,
+            emprestimo.getId_emprestimo()
+        );
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return linhasAfetadas;
+}
+
+
     @Override
     public List<Emprestimo> listar() {
         List<Emprestimo> emprestimos = new ArrayList<>();

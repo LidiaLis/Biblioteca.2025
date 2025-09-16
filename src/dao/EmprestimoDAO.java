@@ -18,6 +18,7 @@ public interface EmprestimoDAO {
     public int inserir(Emprestimo emprestimo);
     public int editar(Emprestimo emprestimo);
     public int apagar(int id_emprestimo) throws ClassNotFoundException, SQLException, SQLIntegrityConstraintViolationException;
+    public int registrarDevolucao(Emprestimo emprestimo);
     public List<Emprestimo> listar();
     public Emprestimo listar(int id_emprestimo);
     public Emprestimo buscaPorId(int idEmprestimo);
