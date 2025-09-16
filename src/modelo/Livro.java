@@ -75,7 +75,7 @@ public class Livro{
     }
     
     @Override
-    public String toString(){
-        return this.titulo;
+    public String toString() {
+        return titulo;
     }
 }

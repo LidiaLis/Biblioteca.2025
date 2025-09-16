@@ -117,15 +117,47 @@ public class LivroDAOJDBC implements LivroDAO{
     }
 
     @Override
-    public int apagar(int id_livro) throws ClassNotFoundException, SQLException, SQLIntegrityConstraintViolationException {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder
-                .append("DELETE FROM livro ")
-                .append("WHERE id_livro = ?");
-        String delete = sqlBuilder.toString();
-        int linha = 0;        
-        linha = DAOGenerico.executarComando(delete, id_livro);
-        return linha;
+    public int apagar(int id_livro) throws ClassNotFoundException, SQLException {
+        int linhasAfetadas = 0;
+
+        try (Connection conn = getConexao()) {
+            // Verifica se o livro tem empréstimos
+            String verificaSql = "SELECT COUNT(*) FROM emprestimo WHERE id_livro = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(verificaSql)) {
+                stmt.setInt(1, id_livro);
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next() && rs.getInt(1) > 0) {
+                    // Tem empréstimos → pergunta ao usuário
+                    int confirmacao = javax.swing.JOptionPane.showConfirmDialog(
+                            null,
+                            "Este livro possui empréstimos vinculados.\n" +
+                            "Se confirmar, TODOS os empréstimos relacionados serão apagados.\n\n" +
+                            "Deseja realmente continuar?",
+                            "Confirmação de Exclusão",
+                            javax.swing.JOptionPane.YES_NO_OPTION,
+                            javax.swing.JOptionPane.WARNING_MESSAGE
+                    );
+
+                    if (confirmacao != javax.swing.JOptionPane.YES_OPTION) {
+                        return 0; // usuário desistiu
+                    }
+
+                    // Apaga os empréstimos vinculados
+                    String sqlEmprestimo = "DELETE FROM emprestimo WHERE id_livro = ?";
+                    DAOGenerico.executarComando(sqlEmprestimo, id_livro);
+                }
+            }
+
+            // Agora apaga o livro
+            String sqlLivro = "DELETE FROM livro WHERE id_livro = ?";
+            linhasAfetadas = DAOGenerico.executarComando(sqlLivro, id_livro);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return linhasAfetadas;
     }
     
   public List<Livro> listarPorCampo(String campo, Object valor) {

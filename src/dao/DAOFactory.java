@@ -11,7 +11,4 @@ public class DAOFactory {
     public static EmprestimoDAO criarEmprestimoDAO() {
     return new EmprestimoDAOJDBC();
     }
-    public static DevolucaoDAO criarDevolucaoDAO() {
-    return new DevolucaoDAOJDBC();
-    }
 }
