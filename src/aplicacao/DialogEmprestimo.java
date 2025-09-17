@@ -332,54 +332,42 @@ public enum Modo {
     for (Livro livro : todosOsLivros) {
         boolean estaEmprestado = false;
         for (Emprestimo emp : emprestimos) {
-            // Só bloqueia se status for "Emprestado"
-            if (emp.getId_livro().getId_livro() == livro.getId_livro() &&
-                "Emprestado".equals(emp.getStatus().toString())) {
+            if (emp.getId_livro().getId_livro() == livro.getId_livro()
+                    && emp.getStatus() == Emprestimo.StatusEmprestimo.EMPRESTADO) {
                 estaEmprestado = true;
                 break;
             }
         }
         if (!estaEmprestado) {
-            modeloLivro.addElement(livro);
+            modeloLivro.addElement(livro); 
         }
     }
-    cbTitulo.setModel(modeloLivro);
 
-    // Se estiver em edição ou devolução, seleciona os já vinculados
-    if (emprestimoSelecionado != null) {
-        // Usuário
-        for (int i = 0; i < modeloLeitores.getSize(); i++) {
-            Usuario u = modeloLeitores.getElementAt(i);
-            if (u.getId_usuario() == emprestimoSelecionado.getId_usuario().getId_usuario()) {
-                cbUsuario.setSelectedIndex(i);
-                break;
-            }
-        }
-
-        // Livro
-        for (int i = 0; i < modeloLivro.getSize(); i++) {
-            Livro l = modeloLivro.getElementAt(i);
-            if (l.getId_livro() == emprestimoSelecionado.getId_livro().getId_livro()) {
-                cbTitulo.setSelectedIndex(i);
-                break;
-            }
-        }
-
-        // Se for devolução, bloqueia as combos
-        if (modoAtual == Modo.DEVOLVER) {
-            cbUsuario.setEnabled(false);
+    if (modoAtual == Modo.INSERIR) {
+        if (modeloLivro.getSize() == 0) {
             cbTitulo.setEnabled(false);
+            JOptionPane.showMessageDialog(this,
+                "Todos os livros estão emprestados no momento.",
+                "Aviso",
+                JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+        } else {
+            cbTitulo.setModel(modeloLivro);
+            cbTitulo.setEnabled(true);
         }
-
+    } else if (modoAtual == Modo.EDITAR) {
+        DefaultComboBoxModel<Livro> modeloLivroEditar = new DefaultComboBoxModel<>();
+        modeloLivroEditar.addElement(emprestimoSelecionado.getId_livro());
+        cbTitulo.setModel(modeloLivroEditar);
+        cbTitulo.setSelectedIndex(0); // garante que o livro esteja selecionado
+        cbTitulo.setEnabled(false); 
+        ftxtData2.setEnabled(false);
     } else {
-        // Se for inserção, seleciona os primeiros por padrão
-        if (modeloLeitores.getSize() > 0) {
-            cbUsuario.setSelectedIndex(0);
-        }
-        if (modeloLivro.getSize() > 0) {
-            cbTitulo.setSelectedIndex(0);
-        }
+        // Modo DEVOLVER continua como antes
+        cbTitulo.setModel(modeloLivro);
+        cbTitulo.setEnabled(true);
     }
+    
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void cbUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbUsuarioActionPerformed

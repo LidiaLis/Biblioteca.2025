@@ -16,12 +16,6 @@ public class Emprestimo{
     public void setLivro(Livro l) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    public enum StatusEmprestimo {
-    EMPRESTADO,
-    DEVOLVIDO,
-    ATRASADO}
-    private StatusEmprestimo status; // aqui entra o enum
-
 
      public int getId_emprestimo() {
         return id_emprestimo;
@@ -67,8 +61,30 @@ public class Emprestimo{
     public void setData_devolucao(Date data_devolucao){
         this.data_devolucao = data_devolucao;
     }
+
+    public void setUsuario(Usuario usuario) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
-     public StatusEmprestimo getStatus() {
+    public enum StatusEmprestimo {
+        EMPRESTADO,
+        DEVOLVIDO,
+        ATRASADO;
+
+        // Método utilitário seguro para converter String para Enum
+        public static StatusEmprestimo fromString(String s) {
+            if (s == null) return null;
+            try {
+                return StatusEmprestimo.valueOf(s.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+    }
+
+    private StatusEmprestimo status;
+
+    public StatusEmprestimo getStatus() {
         return status;
     }
 

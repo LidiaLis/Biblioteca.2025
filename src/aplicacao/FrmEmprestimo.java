@@ -9,6 +9,7 @@ import aplicacao.DialogEmprestimo.Modo;
 import dao.DAOFactory;
 import dao.EmprestimoDAO;
 import dao.EmprestimoDAOJDBC;
+import dao.LivroDAO;
 import java.awt.Component;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -20,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import modelo.Emprestimo;
+import modelo.Emprestimo.StatusEmprestimo;
 import modelo.Usuario;
 
 /**
@@ -105,17 +107,11 @@ private void atualizarTabela() {
         btnApagar = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        cbDataPrevista = new javax.swing.JComboBox<>();
         cbUsuario = new javax.swing.JComboBox<>();
         cbTitulo = new javax.swing.JComboBox<>();
-        cbDataEmprestimo = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        cbDataDevolucao = new javax.swing.JComboBox<>();
-        jLabel8 = new javax.swing.JLabel();
         cbStatus = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
         btnLimpar = new javax.swing.JButton();
@@ -214,13 +210,6 @@ private void atualizarTabela() {
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 244));
 
-        cbDataPrevista.setToolTipText("Selecione para realizar a busca.");
-        cbDataPrevista.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbDataPrevistaActionPerformed(evt);
-            }
-        });
-
         cbUsuario.setModel(new javax.swing.DefaultComboBoxModel(
             java.util.stream.IntStream.range(0, tblAcervo.getRowCount())
             .mapToObj(i -> tblAcervo.getValueAt(i, 1).toString())
@@ -246,40 +235,16 @@ private void atualizarTabela() {
         }
     });
 
-    cbDataEmprestimo.setToolTipText("Selecione para realizar a busca.");
-    cbDataEmprestimo.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-            cbDataEmprestimoActionPerformed(evt);
-        }
-    });
-
     jLabel5.setText("  Titulo  ");
     jLabel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 0)));
 
-    jLabel6.setText(" Data Emprestimo ");
-    jLabel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 0)));
-
     jLabel7.setText(" Leitor  ");
     jLabel7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 0)));
-
-    jLabel4.setText(" Data Prevista ");
-    jLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 0)));
 
     jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
     jLabel14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recurso/filter.png"))); // NOI18N
     jLabel14.setText("Filtro:");
 
-    cbDataDevolucao.setToolTipText("Selecione para realizar a busca.");
-    cbDataDevolucao.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-            cbDataDevolucaoActionPerformed(evt);
-        }
-    });
-
-    jLabel8.setText("  Data Devolução  ");
-    jLabel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 0)));
-
-    cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Emprestado", "Devolvido", "Atrasado" }));
     cbStatus.setToolTipText("Selecione para realizar a busca.");
     cbStatus.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -296,72 +261,45 @@ private void atualizarTabela() {
         jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel2Layout.createSequentialGroup()
             .addComponent(jLabel14)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGap(127, 127, 127)
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(cbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                     .addComponent(jLabel7)
                     .addGap(42, 42, 42)))
-            .addGap(27, 27, 27)
+            .addGap(102, 102, 102)
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addGap(39, 39, 39)
                     .addComponent(jLabel5))
                 .addComponent(cbTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGap(29, 29, 29)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                .addComponent(cbDataEmprestimo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGap(26, 26, 26)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(cbDataPrevista, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(8, 8, 8)
-                    .addComponent(jLabel4)))
-            .addGap(27, 27, 27)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(cbDataDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(98, 98, 98)
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(32, 32, 32)
-                    .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(56, 56, 56)
-                    .addComponent(jLabel9)))
+                    .addGap(24, 24, 24)
+                    .addComponent(jLabel9))
+                .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
     jPanel2Layout.setVerticalGroup(
         jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel2Layout.createSequentialGroup()
-            .addGap(18, 18, 18)
+            .addGap(11, 11, 11)
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addComponent(jLabel9)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addComponent(jLabel8)
+                    .addComponent(jLabel5)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(cbDataDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cbTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbDataEmprestimo, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbDataPrevista, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel14)))))
-            .addGap(41, 41, 41))
+                    .addComponent(cbTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addComponent(jLabel7)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(cbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jLabel14))
+            .addGap(48, 48, 48))
     );
 
     btnLimpar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recurso/broom.png"))); // NOI18N
@@ -392,24 +330,25 @@ private void atualizarTabela() {
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addComponent(btnInserir1)
-                            .addGap(46, 46, 46)
-                            .addComponent(btnDevolucao)
-                            .addGap(42, 42, 42)
-                            .addComponent(btnEditar)
-                            .addGap(41, 41, 41)
-                            .addComponent(btnApagar)
-                            .addGap(39, 39, 39)
-                            .addComponent(btnLimpar)
-                            .addGap(136, 136, 136))))))
-        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-            .addContainerGap(57, Short.MAX_VALUE)
-            .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 855, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(57, 57, 57))
+                    .addGap(0, 987, Short.MAX_VALUE)
+                    .addComponent(jLabel3))))
+        .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(69, 69, 69)
+                    .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 855, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(147, 147, 147)
+                    .addComponent(btnInserir1)
+                    .addGap(46, 46, 46)
+                    .addComponent(btnDevolucao)
+                    .addGap(42, 42, 42)
+                    .addComponent(btnEditar)
+                    .addGap(41, 41, 41)
+                    .addComponent(btnApagar)
+                    .addGap(39, 39, 39)
+                    .addComponent(btnLimpar)))
+            .addGap(0, 0, Short.MAX_VALUE))
     );
     jPanel1Layout.setVerticalGroup(
         jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -425,14 +364,14 @@ private void atualizarTabela() {
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(29, 29, 29)
+                    .addGap(18, 18, 18)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnInserir1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnApagar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(37, 37, 37))))
+                    .addGap(48, 48, 48))))
     );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -519,10 +458,6 @@ private void atualizarTabela() {
 
     }//GEN-LAST:event_btnApagarActionPerformed
 
-    private void cbDataPrevistaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDataPrevistaActionPerformed
-    atualizarTabela("data_prevista", cbDataPrevista.getSelectedItem().toString());
-    }//GEN-LAST:event_cbDataPrevistaActionPerformed
-
     private void cbTituloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTituloActionPerformed
     atualizarTabela("titulo", cbTitulo.getSelectedItem().toString());
     }//GEN-LAST:event_cbTituloActionPerformed
@@ -563,82 +498,37 @@ EmprestimoDAO dao = new EmprestimoDAOJDBC();
     }
     cbTitulo.setModel(modeloTitulo);
 
-    // Data de Empréstimo
-    DefaultComboBoxModel<String> modeloDataEmprestimo = new DefaultComboBoxModel<>();
-    SimpleDateFormat sdfEmp = new SimpleDateFormat("MM/yyyy");
-
-    for (Emprestimo l : dao.listar()) {
-        if (l.getData_emprestimo() != null) {
-            String dataEmp = sdfEmp.format(l.getData_emprestimo());
-            if (modeloDataEmprestimo.getIndexOf(dataEmp) == -1) {
-                modeloDataEmprestimo.addElement(dataEmp);
-            }
-        }
-        // Se for null, simplesmente ignora
-    }
-
-    cbDataEmprestimo.setModel(modeloDataEmprestimo);
-
-    // Data Prevista
-    DefaultComboBoxModel<String> modeloDataPrevista = new DefaultComboBoxModel<>();
-    SimpleDateFormat sdfPrev = new SimpleDateFormat("MM/yyyy");
-
-    for (Emprestimo l : dao.listar()) {
-        if (l.getData_prevista() != null) {
-            String dataPrev = sdfPrev.format(l.getData_prevista());
-            if (modeloDataPrevista.getIndexOf(dataPrev) == -1) {
-                modeloDataPrevista.addElement(dataPrev);
-            }
-        }
-    }
-    cbDataPrevista.setModel(modeloDataPrevista);
-
-    // Data Devolução
-    DefaultComboBoxModel<String> modeloDataDevolucao = new DefaultComboBoxModel<>();
-    SimpleDateFormat sdfDev = new SimpleDateFormat("MM/yyyy");
-
-    for (Emprestimo l : dao.listar()) {
-        if (l.getData_devolucao() != null) {
-            String dataDev = sdfDev.format(l.getData_devolucao());
-            if (modeloDataDevolucao.getIndexOf(dataDev) == -1) {
-                modeloDataDevolucao.addElement(dataDev);
-            }
-        }
-    }
-    cbDataDevolucao.setModel(modeloDataDevolucao);
-
-
+    DefaultComboBoxModel<StatusEmprestimo> modeloStatus = new DefaultComboBoxModel<>(StatusEmprestimo.values());
+    cbStatus.setModel(modeloStatus);
 
     }//GEN-LAST:event_formWindowGainedFocus
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         ajustarLarguraColunas(tblAcervo);
-        
         tblAcervo.getColumnModel().getColumn(6).setPreferredWidth(80);   // Coluna Data
-
-
-
     }//GEN-LAST:event_formWindowOpened
 
     private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
         cbUsuario.setSelectedIndex(0);      // ou valorInicialDoador se quiser
         cbTitulo.setSelectedIndex(0);
-        cbDataEmprestimo.setSelectedIndex(0);
-        cbDataPrevista.setSelectedIndex(0);
+        cbStatus.setSelectedIndex(0);
 
         atualizarTabela();        // TODO add your handling code here:
     }//GEN-LAST:event_btnLimparActionPerformed
 
-    private void cbDataEmprestimoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDataEmprestimoActionPerformed
-        atualizarTabela("data_emprestimo", cbDataEmprestimo.getSelectedItem().toString());
-    }//GEN-LAST:event_cbDataEmprestimoActionPerformed
-
-    private void cbDataDevolucaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDataDevolucaoActionPerformed
-    atualizarTabela("data_devolucao", cbDataDevolucao.getSelectedItem().toString());
-    }//GEN-LAST:event_cbDataDevolucaoActionPerformed
-
     private void cbStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbStatusActionPerformed
-    atualizarTabela("status", cbStatus.getSelectedItem().toString());
+ String statusSelecionado = cbStatus.getSelectedItem().toString();
+    
+    boolean existe = EmprestimoDAOJDBC.existePorStatus(statusSelecionado);
+    
+    if (existe) {
+        atualizarTabela("status", statusSelecionado);
+    } else {
+        JOptionPane.showMessageDialog(this, 
+                "Nenhum registro encontrado com status: " + statusSelecionado,
+                "Aviso",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
     }//GEN-LAST:event_cbStatusActionPerformed
 
     private void btnDevolucaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDevolucaoActionPerformed
@@ -760,19 +650,13 @@ EmprestimoDAO dao = new EmprestimoDAOJDBC();
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnInserir1;
     private javax.swing.JButton btnLimpar;
-    private javax.swing.JComboBox<String> cbDataDevolucao;
-    private javax.swing.JComboBox<String> cbDataEmprestimo;
-    private javax.swing.JComboBox<String> cbDataPrevista;
-    private javax.swing.JComboBox<String> cbStatus;
+    private javax.swing.JComboBox<Emprestimo.StatusEmprestimo> cbStatus;
     private javax.swing.JComboBox<String> cbTitulo;
     private javax.swing.JComboBox<Usuario> cbUsuario;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

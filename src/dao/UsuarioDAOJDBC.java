@@ -111,44 +111,66 @@ public class UsuarioDAOJDBC implements UsuarioDAO{
     }
 
     @Override
-    public int apagar(int id_usuario) throws ClassNotFoundException, SQLException, SQLIntegrityConstraintViolationException {
-    Connection con = getConexao();
-    PreparedStatement stmt = null;
-    int linhasAfetadas = 0;
+    public int apagar(int id_usuario) throws ClassNotFoundException, SQLException {
+        int linhasAfetadas = 0;
 
-    try {
-        con.setAutoCommit(false);
+        try (Connection conn = getConexao()) {
 
-        // 1. Apagar empréstimos do usuário
-        stmt = con.prepareStatement("DELETE FROM emprestimo WHERE id_usuario = ?");
-        stmt.setInt(1, id_usuario);
-        stmt.executeUpdate();
-        stmt.close();
+            // 1. Verifica se o usuário possui livros cadastrados
+            String verificaLivros = "SELECT COUNT(*) FROM livro WHERE id_doador = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(verificaLivros)) {
+                stmt.setInt(1, id_usuario);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    int confirmacao = JOptionPane.showConfirmDialog(
+                            null,
+                            "Este usuário possui livros cadastrados.\n" +
+                            "Todos os livros e empréstimos relacionados serão apagados.\n\n" +
+                            "Deseja realmente continuar?",
+                            "Confirmação de Exclusão",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE
+                    );
 
-        // 2. Apagar livros cadastrados pelo usuário
-        stmt = con.prepareStatement("DELETE FROM livro WHERE id_usuario = ?");
-        stmt.setInt(1, id_usuario);
-        stmt.executeUpdate();
-        stmt.close();
+                    if (confirmacao != JOptionPane.YES_OPTION) {
+                        return 0; // usuário desistiu
+                    }
+                }
+            }
 
-        // 3. Apagar o próprio usuário
-        stmt = con.prepareStatement("DELETE FROM usuario WHERE id_usuario = ?");
-        stmt.setInt(1, id_usuario);
-        linhasAfetadas = stmt.executeUpdate();
-        stmt.close();
+            conn.setAutoCommit(false);
 
-        con.commit();
+            // 2. Apaga todos os empréstimos do usuário
+            String sqlEmprestimosUsuario = "DELETE FROM emprestimo WHERE id_usuario = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlEmprestimosUsuario)) {
+                stmt.setInt(1, id_usuario);
+                stmt.executeUpdate();
+            }
 
-    } catch (SQLException e) {
-        con.rollback();
-        throw e;
-    } finally {
-        if (stmt != null) stmt.close();
-        if (con != null) con.close();
+            // 3. Apaga todos os livros cadastrados pelo usuário
+            String sqlLivros = "DELETE FROM livro WHERE id_doador = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlLivros)) {
+                stmt.setInt(1, id_usuario);
+                stmt.executeUpdate();
+            }
+
+            // 4. Apaga o próprio usuário
+            String sqlUsuario = "DELETE FROM usuario WHERE id_usuario = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlUsuario)) {
+                stmt.setInt(1, id_usuario);
+                linhasAfetadas = stmt.executeUpdate();
+            }
+
+            conn.commit();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        return linhasAfetadas;
     }
 
-    return linhasAfetadas;
-}
 public List<Usuario> listarPorNome(String textoDigitado) {
     List<Usuario> usuarios = new ArrayList<>();
 

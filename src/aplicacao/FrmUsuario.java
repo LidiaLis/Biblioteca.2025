@@ -11,9 +11,11 @@ import dao.UsuarioDAOJDBC;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -99,6 +101,7 @@ public class FrmUsuario extends javax.swing.JFrame {
         jLabel14 = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
         btnLimpar = new javax.swing.JButton();
+        btnApagar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -184,7 +187,7 @@ public class FrmUsuario extends javax.swing.JFrame {
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 244));
 
-        jLabel1.setText("Nome");
+        jLabel1.setText(" Nome ");
         jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 0)));
 
         jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -202,16 +205,15 @@ public class FrmUsuario extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(33, 33, 33)
+                .addComponent(jLabel14)
+                .addGap(128, 128, 128)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(296, 296, 296)
+                        .addGap(80, 80, 80)
                         .addComponent(jLabel1))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(jLabel14)
-                        .addGap(101, 101, 101)
-                        .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(214, Short.MAX_VALUE))
+                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -234,30 +236,43 @@ public class FrmUsuario extends javax.swing.JFrame {
             }
         });
 
+        btnApagar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recurso/delete.png"))); // NOI18N
+        btnApagar.setText("Apagar");
+        btnApagar.setToolTipText("Edita a linha selecionada.");
+        btnApagar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnApagarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(47, 47, 47)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(65, 65, 65)
-                        .addComponent(btnInserir1)
-                        .addGap(58, 58, 58)
-                        .addComponent(btnEditar)
-                        .addGap(54, 54, 54)
-                        .addComponent(btnLimpar)))
-                .addContainerGap(37, Short.MAX_VALUE))
+                        .addGap(52, 52, 52)
+                        .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 607, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(66, 66, 66)
+                .addComponent(btnInserir1)
+                .addGap(58, 58, 58)
+                .addComponent(btnEditar)
+                .addGap(58, 58, 58)
+                .addComponent(btnApagar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                .addComponent(btnLimpar)
+                .addGap(86, 86, 86))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -273,12 +288,13 @@ public class FrmUsuario extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(ScrollLivro, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(37, 37, 37)
+                        .addGap(38, 38, 38)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnInserir1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(35, 35, 35))))
+                            .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnApagar, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(34, 34, 34))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -364,11 +380,49 @@ public class FrmUsuario extends javax.swing.JFrame {
     });
     }//GEN-LAST:event_txtNomeActionPerformed
 
+    private void btnApagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApagarActionPerformed
+    int linhaSelecionada = tblAcervo.getSelectedRow();
+
+    if (linhaSelecionada == -1) {
+        JOptionPane.showMessageDialog(this, "Selecione a linha a ser apagada!", "Aviso", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    int confirmacao = JOptionPane.showConfirmDialog(
+        this,
+        "Tem certeza que deseja apagar este usuário?",
+        "Confirmar exclusão",
+        JOptionPane.YES_NO_OPTION
+    );
+
+    if (confirmacao == JOptionPane.YES_OPTION) {
+        int idUsuario = (int) tblAcervo.getValueAt(linhaSelecionada, 0); // coluna 0 = id_usuario
+        try {
+            // Usa a implementação correta do DAO
+            UsuarioDAO dao = new UsuarioDAOJDBC();
+
+            // Tenta apagar do banco
+            int sucesso = dao.apagar(idUsuario);
+
+            if (sucesso > 0) {
+                ((DefaultTableModel) tblAcervo.getModel()).removeRow(linhaSelecionada);
+                JOptionPane.showMessageDialog(this, "Usuário apagado com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao apagar o usuário!", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao tentar apagar o usuário: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+        
+    }//GEN-LAST:event_btnApagarActionPerformed
+
     /**
      * @param args the command line arguments
      */
-
-
      private void preencherTabela() {
         modelo.getDataVector().clear();
         try {
@@ -436,6 +490,7 @@ public class FrmUsuario extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane ScrollLivro;
+    private javax.swing.JButton btnApagar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnInserir1;
     private javax.swing.JButton btnLimpar;
